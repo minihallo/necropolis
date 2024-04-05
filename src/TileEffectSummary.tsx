@@ -40,7 +40,7 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
         const { item } = tile;
     
         switch (item.effectType) {
-            case 'horizontal': {
+            case 'Horizontal': {
                 const rowStart = index - (index % ROW_LENGTH);
                 const rowEnd = rowStart + ROW_LENGTH;
                 
@@ -64,16 +64,16 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
     
                 for (let i = start; i<end; i++) {
                     if (tilesCopy[i] && tilesCopy[i].item) {
-                        if (tilesCopy[i].item!.effectType !== 'horizontal'
-                         && tilesCopy[i].item!.effectType !== 'vertical'
-                         && tilesCopy[i].item!.effectType !== 'adjacent') {
+                        if (tilesCopy[i].item!.effectType !== 'Horizontal'
+                         && tilesCopy[i].item!.effectType !== 'Vertical'
+                         && tilesCopy[i].item!.effectType !== 'Adjacent') {
                             tilesCopy[i].item!.value += tilesCopy[i].item!.value * (item.value / 100);
                         }
                     }
                 }
                 break;
             }
-            case 'vertical': {
+            case 'Vertical': {
                 let start = index % 17;
                 let end = tiles.length; // 세로 검사를 위한 끝 설정
             
@@ -95,16 +95,16 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
 
                 for (let i = start; i <= end; i += ROW_LENGTH) {
                     if (tilesCopy[i] && tilesCopy[i].item && i !== index) {
-                        if (tilesCopy[i].item!.effectType !== 'horizontal'
-                            && tilesCopy[i].item!.effectType !== 'vertical'
-                            && tilesCopy[i].item!.effectType !== 'adjacent') {
+                        if (tilesCopy[i].item!.effectType !== 'Horizontal'
+                            && tilesCopy[i].item!.effectType !== 'Vertical'
+                            && tilesCopy[i].item!.effectType !== 'Adjacent') {
                             tilesCopy[i].item!.value += tilesCopy[i].item!.value * (item.value / 100);
                         }
                     }
                 }
                 break;
             }
-            case 'adjacent': {
+            case 'Adjacent': {
                 const adjacentIndices = [
                     index - 1, // 왼쪽
                     index + 1, // 오른쪽
@@ -123,7 +123,7 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
                         }
             
                         if (!adjTile.disabled && adjTile.item) {
-                            if (adjTile.item.effectType !== 'horizontal' && adjTile.item.effectType !== 'vertical' && adjTile.item.effectType !== 'adjacent') {
+                            if (adjTile.item.effectType !== 'Horizontal' && adjTile.item.effectType !== 'Vertical' && adjTile.item.effectType !== 'Adjacent') {
                                 if (adjTile.corpseType === tile.corpseType)
                                 adjTile.item.value += adjTile.item.value * (item.value / 100);
                             }
@@ -137,9 +137,9 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
     
     const effectsSummary = tilesCopy.reduce<EffectSummary>((acc, tile) => {
         if (tile.active && !tile.disabled && tile.item
-            && tile.item.effectType !== 'horizontal'
-            && tile.item.effectType !== 'vertical'
-            && tile.item.effectType !== 'adjacent') {
+            && tile.item.effectType !== 'Horizontal'
+            && tile.item.effectType !== 'Vertical'
+            && tile.item.effectType !== 'Adjacent') {
             const key = `${tile.item.effectType}-${tile.item.change}`;
             if (!acc[key]) {
                 acc[key] = { ...tile.item, count: 1 };
