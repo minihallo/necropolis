@@ -1,13 +1,36 @@
 import React, { useState } from 'react';
 import './App.css';
 import Button from '@mui/material/Button';
-import { CorpseType } from './types';
-import CorpseEffect from './CorpseEffect';
+import { CorpseType, CorpseEffect } from './types';
+import CorpseEffectButton from './CorpseEffectButton';
+import TileEffectSummary from './TileEffectSummary';
+import background from "./path-of-exile-necropolis-1536x864.jpg";
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB-v6DOUIbzGt0Dreztzt7DB4Eun1eGRMI",
+  authDomain: "necropolispoe.firebaseapp.com",
+  projectId: "necropolispoe",
+  storageBucket: "necropolispoe.appspot.com",
+  messagingSenderId: "214113047169",
+  appId: "1:214113047169:web:cf7fc04ae56a6024e2b380",
+  measurementId: "G-J83VZJ4CNB"
+};
+
+interface Tile {
+  corpseType: CorpseType | null;
+  item: CorpseEffect | null; // `item`의 타입을 구체적으로 명시해야 할 수 있음
+  active: boolean;
+  disabled: boolean;
+}
 
 function App() {
-  const disabledIndexes = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 23, 24, 25, 26, 27, 34, 35, 36, 41, 42, 43, 44, 46, 47, 50, 58, 59, 60, 61, 63, 64, 72, 76, 77, 78, 88, 89, 90, 98, 99, 106, 107, 115, 116, 127, 128]
-  const [tiles, setTiles] = useState(
-    Array(17 * 8).fill(true).map((val, index) => ({
+  const disabledIndexes = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 22, 23, 24, 25, 26, 34, 35, 36, 41, 42, 43, 44, 46, 47, 50, 58, 59, 60, 61, 63, 64, 72, 76, 77, 78, 88, 89, 90, 98, 99, 106, 107, 115, 116, 127, 128]
+  const [tiles, setTiles] = useState<Tile[]>(
+    Array(17 * 8).fill(false).map((val, index) => ({
+      corpseType: null,
+      item: null,
       active: val,
       disabled: disabledIndexes.includes(index)
     }))
@@ -19,58 +42,100 @@ function App() {
   const [selectedType, setSelectedType] = useState<CorpseType | null>(null);
 
   const handleTileClick = (index: any) => {
-    const newTiles = [...tiles];
-    if (!newTiles[index].disabled) {
-      newTiles[index].active = !newTiles[index].active;
-      setTiles(newTiles);
+    if (selectedCorpseffect && selectedType) {
+      const newTiles = [...tiles];
+      if (!newTiles[index].disabled) {
+        newTiles[index].active = !newTiles[index].active;
+        if (newTiles[index].active) {
+          newTiles[index].corpseType = selectedType;
+          newTiles[index].item = {effectType: selectedCorpseffect.effectType, change: selectedCorpseffect.change, value: selectedCorpseffect.value }
+        } else {
+          newTiles[index].item = null;
+        }
+        setTiles(newTiles);
+      }
+    } else {
+      if (!selectedType && !selectedCorpseffect) {
+        alert('타입과 효과를 선택하세요')
+      } else if (!selectedType) {
+        alert('타입을 선택하세요')
+      } else if (!selectedCorpseffect) {
+        alert('효과를 선택하세요')
+      }
     }
   };
 
   const handleTypeSelect = (type: CorpseType) => {
     if (selectedType === type) {
-      setSelectedType(null);  // 선택된 타입이 다시 클릭되면 선택을 해제
+      setSelectedType(null);
     } else {
-      setSelectedType(type);  // 다른 타입이 클릭되면 선택을 업데이트
+      setSelectedType(type);
     }
   };
 
   return (
     <div className="App">
+      <div style={{margin: "10px"}}>Your Necropolis</div>
       <div className="grid">
-        {tiles.map((tile, index) => (
-          <div
+        {tiles.map((tile, index) => {
+          const tileInfo = ` CorpseType: ${tile.corpseType ? tile.corpseType : 'None'} 
+CorpseEffect: ${tile.item ? `${tile.item.effectType} ${tile.item.change} ${tile.item.value}`: 'None'}
+          `;
+          return (
+            <div
             key={index}
-            className={`tile ${tile.active ? 'filled' : ''} ${tile.disabled ? 'disabled' : ''}`}
+            className={
+              `tile ${tile.active ? 'filled' : ''} 
+              ${tile.disabled ? 'disabled' : ''} 
+              ${tile.item?.effectType === 'Horizontal' ? 'horizontal' : ''}
+              ${tile.item?.effectType === 'Vertical' ? 'vertical' : ''}
+              ${tile.item?.effectType === 'Adjacent' ? 'adjacent' : ''}
+            `}
             onClick={() => handleTileClick(index)}
+            title={tileInfo.trim()}
           >
-            {tile.disabled ? 'X' : ''}
+            {tile.disabled ? 'X' : (
+              tile.item?.effectType === 'Horizontal' ? 'H' :
+              tile.item?.effectType === 'Vertical' ? 'V' : 
+              tile.item?.effectType === 'Adjacent' ? 'A' : ''
+            )}
+            {!tile.disabled && tile.active &&tile.item?.effectType !== 'Horizontal' && tile.item?.effectType !== 'Vertical' && tile.item?.effectType !== 'Adjacent' ? 
+            `${tile.item?.effectType}\n${tile.item?.change}` : ''}
           </div>
-        ))}
+          )
+        })}
       </div>
 
       <div className="menu-container">
-        {CorpseTypes.map((type) => (
-          <Button
-            key={type}
-            variant="outlined"
-            color={selectedType === type ? 'primary' : 'inherit'}
-            onClick={() => handleTypeSelect(type)}
-            style={{
-              margin: '5px',
-              borderColor: selectedType === type ? '#1976d2' : '#ccc',
-              color: selectedType === type ? '#1976d2' : 'inherit',
-            }}
-          >
-            {type}
-          </Button>
-        ))}
+        <div className="background-container">
+          {selectedType ? <div/> : <div className="header">Choose a corpse type</div>}
+          {CorpseTypes.map((type) => (
+            <Button
+              key={type}
+              variant="outlined"
+              color={selectedType === type ? 'primary' : 'inherit'}
+              onClick={() => handleTypeSelect(type)}
+              style={{
+                margin: '5px',
+                borderColor: selectedType === type ? '#1976d2' : '#ccc',
+                color: selectedType === type ? '#1976d2' : 'inherit',
+              }}
+            >
+              {type}
+            </Button>
+          ))}
+        </div>
       </div>
 
-    <CorpseEffect 
+    <CorpseEffectButton
       onSelectedCorpseEffect={setSelectedCorpseEffect}
     />
+
+    <TileEffectSummary tiles={tiles} /> 
   </div>
   );
 }
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 export default App;
