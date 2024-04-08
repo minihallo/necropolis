@@ -1,16 +1,66 @@
 .App {
   text-align: center;
-  overflow-x: auto; /* 필요시 가로 스크롤 허용 */
-  display: flex; /* Flexbox 레이아웃을 사용 */
   justify-content: center; /* 가로 방향으로 중앙 정렬 */
-  align-items: center; /* 세로 방향으로 중앙 정렬 */
+  align-items: center;
+  display: flex;
   flex-direction: column;
+}
+
+.top_container {
+  margin-top: 15px;
+  display: flex;
+}
+
+.bottom_container {
+  margin-top: 15px;
+  display: flex;
+  max-height: 500px;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(17, 65px); /* 8개의 컬럼 */
-  grid-gap: 5px; /* 격자 간격 */
+  grid-template-columns: repeat(17, 55px);
+  grid-gap: 4px;
+  font-size: 12px;
+}
+
+.right-menu-container {
+  max-width: 450px;
+  margin-left: 25px;
+  margin-top: 15px;
+  display: flex; /* Flexbox 레이아웃을 사용 */
+  flex-direction: row; /* 아이템을 가로 방향으로 정렬 */
+  align-items: center; /* 세로 방향에서 중앙 정렬 */
+  gap: 10px; /* 아이템 사이의 간격 */
+  flex-direction: column;
+  width: 90%; /* 부모 요소에 따라 가로 크기 조정 */
+}
+
+.background-container {
+  background-color: #f0f0f0; /* 기존의 배경색 */
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
+  width: 100%; /* 부모 요소에 맞게 가로 너비를 조정 */
+
+}
+
+.tile {
+  width: 55px; /* 타일 너비 */
+  height: 55px; /* 타일 높이, 너비와 동일하게 설정하여 정사각형으로 만듦 */
+  background-color: #ddd; /* 기본 배경색 */
+  border: 1px solid #ccc; /* 테두리 */
+  display: flex;
+  justify-content: center; /* 내용 가운데 정렬 */
+  align-items: center; /* 내용 가운데 정렬 */
+}
+
+.tile.disabled {
+  background-color: #888; /* 사용하지 않는 타일의 배경색 */
+  color: white; /* 'X' 표시의 색상 */
+  font-weight: bold; /* 'X' 표시를 굵게 */
 }
 
 .tile.filled {
@@ -29,59 +79,136 @@
   background-color: yellow; /* horizontal 타입일 때 빨간색 배경 */
 }
 
-.tile {
-  width: 65px; /* 타일 너비 */
-  height: 65px; /* 타일 높이, 너비와 동일하게 설정하여 정사각형으로 만듦 */
-  background-color: #ddd; /* 기본 배경색 */
-  border: 1px solid #ccc; /* 테두리 */
-  display: flex;
-  justify-content: center; /* 내용 가운데 정렬 */
-  align-items: center; /* 내용 가운데 정렬 */
+.tile.Physical_increase {
+  background-color: rgb(136, 87, 51);
 }
 
-.tile.disabled {
-  background-color: #888; /* 사용하지 않는 타일의 배경색 */
-  color: white; /* 'X' 표시의 색상 */
-  font-weight: bold; /* 'X' 표시를 굵게 */
+.tile.Physical_decrease {
+  background-color: rgb(134, 105, 87);
 }
 
-.menu-container {
-  margin-top: 30px;
-  display: flex; /* Flexbox 레이아웃을 사용 */
-  flex-direction: row; /* 아이템을 가로 방향으로 정렬 */
-  justify-content: center; /* 가운데 정렬 */
-  align-items: center; /* 세로 방향에서 중앙 정렬 */
-  gap: 10px; /* 아이템 사이의 간격 */
-
+.tile.Fire_increase {
+  background-color: rgb(219, 81, 81);
 }
 
-.background-container {
-  background-color: #f0f0f0; /* 기존의 배경색 */
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.tile.Fire_decrease {
+  background-color: rgb(214, 150, 150);
+}
+
+.tile.Cold_increase {
+  background-color: rgb(83, 81, 219);
+}
+
+.tile.Cold_decrease {
+  background-color: rgb(150, 154, 214);
+}
+
+.tile.Lightning_increase {
+  background-color: rgb(224, 222, 106);
+}
+
+.tile.Lightning_decrease {
+  background-color: rgb(224, 222, 176);
+}
+
+.tile.Chaos_increase {
+  background-color: rgb(138, 73, 224);
+}
+
+.tile.Chaos_decrease {
+  background-color: rgb(175, 138, 222);
+}
+
+.tile.Life_increase {
+  background-color: rgb(224, 128, 73);
+}
+
+.tile.Life_decrease {
+  background-color: rgb(223, 186, 138);
+}
+
+.tile.Mana_increase {
+  background-color: rgb(73, 189, 224);
+}
+
+.tile.Mana_decrease {
+  background-color: rgb(138, 223, 212);
+}
+
+.tile.Attack_increase {
+  background-color: rgb(131, 49, 131);
+}
+
+.tile.Attack_decrease {
+  background-color: rgb(130, 99, 156);
+}
+
+.tile.Caster_increase {
+  background-color: rgb(85, 226, 226);
+}
+
+.tile.Caster_decrease {
+  background-color: rgb(143, 230, 218);
+}
+
+.tile.Elemental_increase {
+  background-color: rgb(212, 83, 115);
+}
+
+.tile.Elemental_decrease {
+  background-color: rgb(221, 143, 204);
+}
+
+.tile.Defences_increase {
+  background-color: rgb(177, 117, 68);
+}
+
+.tile.Defences_decrease {
+  background-color: rgb(207, 194, 132);
+}
+
+.tile.Critical_increase {
+  background-color: rgb(87, 120, 230);
+}
+
+.tile.Critical_decrease {
+  background-color: rgb(140, 172, 221);
+}
+
+.tile.Speed_increase {
+  background-color: rgb(227, 230, 86);
+}
+
+.tile.Speed_decrease {
+  background-color: rgb(201, 218, 142);
+}
+
+.tile.Attribute_increase {
+  background-color: rgb(225, 90, 230);
+}
+
+.tile.Attribute_decrease {
+  background-color: rgb(208, 149, 231);
+}
+
+.tile.Resistance_increase {
+  background-color: rgb(201, 86, 230);
+}
+
+.tile.Resistance_decrease {
+  background-color: rgb(192, 147, 229);
+}
+
+.tile.Minion_increase {
+  background-color: rgb(81, 209, 166);
+}
+
+.tile.Minion_decrease {
+  background-color: rgb(149, 233, 233);
 }
 
 .header {
   padding: 5px;
   background-color: lightgray;
   margin-bottom: 10px;
-}
-
-.background-image-container {
-  position: relative;
-  width: 100%;  /* 필요한 너비 설정 */
-  height: 100%; /* 필요한 높이 설정 */
-}
-
-.background-image-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: inherit; /* 부모 요소의 배경 이미지 상속 */
-  opacity: 0.02; /* 투명도 설정 */
 }

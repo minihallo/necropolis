@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import './App.css';
 import { ChangeType, CorpseType, CorpseEffect } from './types';
+import { Divider, List, ListItem, ListItemText } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface Tile {
     corpseType: CorpseType | null
@@ -24,6 +26,8 @@ interface EffectSummary {
 }
 
 function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
+    const { t } = useTranslation();
+    
     const ROW_LENGTH = 17;
     const COLUMN_LENGTH = 8;
 
@@ -62,12 +66,12 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
                     }
                 }
     
-                for (let i = start; i<end; i++) {
+                for (let i = start; i <= end; i++) {
                     if (tilesCopy[i] && tilesCopy[i].item) {
                         if (tilesCopy[i].item!.effectType !== 'Horizontal'
                          && tilesCopy[i].item!.effectType !== 'Vertical'
                          && tilesCopy[i].item!.effectType !== 'Adjacent') {
-                            tilesCopy[i].item!.value += tilesCopy[i].item!.value * (item.value / 100);
+                            tilesCopy[i].item!.value += Math.floor(tiles[i].item!.value * (item.value / 100));
                         }
                     }
                 }
@@ -98,7 +102,7 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
                         if (tilesCopy[i].item!.effectType !== 'Horizontal'
                             && tilesCopy[i].item!.effectType !== 'Vertical'
                             && tilesCopy[i].item!.effectType !== 'Adjacent') {
-                            tilesCopy[i].item!.value += tilesCopy[i].item!.value * (item.value / 100);
+                            tilesCopy[i].item!.value += Math.floor(tiles[i].item!.value * (item.value / 100));
                         }
                     }
                 }
@@ -125,7 +129,7 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
                         if (!adjTile.disabled && adjTile.item) {
                             if (adjTile.item.effectType !== 'Horizontal' && adjTile.item.effectType !== 'Vertical' && adjTile.item.effectType !== 'Adjacent') {
                                 if (adjTile.corpseType === tile.corpseType)
-                                adjTile.item.value += adjTile.item.value * (item.value / 100);
+                                adjTile.item.value += Math.floor(tiles[adjIndex].item!.value * (item.value / 100));
                             }
                         }
                     }
@@ -152,13 +156,43 @@ function TileEffectSummary({ tiles }: TileEffectSummaryProps) {
     }, {} as EffectSummary);
     
     return (
-        <div className="tile-effect-summary">
-            <ul>
-                {Object.entries(effectsSummary).map(([key, effect]) => (
-                    <p key={key}>{effect.effectType} {effect.change} - {Math.floor(effect.value)} (Count: {effect.count})</p>
-                ))}
-            </ul>
-        </div>
+        <List
+            component="nav"
+            aria-label="summary"
+            sx={{
+            bgcolor: 'background.paper',
+            position: 'relative',
+            overflow: 'auto', // 스크롤 가능하도록 설정
+            maxHeight: 700, // 최대 높이 설정
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 1,
+            m: 1,
+            }}
+        >
+            {Object.entries(effectsSummary).map(([key, effect], index, array) => (
+                <React.Fragment>
+                    <ListItem
+                        key={key}
+                        sx={{
+                        textAlign: 'center',
+                        '&.Mui-selected': {
+                            bgcolor: 'action.selected',
+                        },
+                        '&.Mui-selected:hover': {
+                            bgcolor: 'action.hover',
+                        },
+                        '&:hover': {
+                            backgroundColor: 'action.hover',
+                        },
+                        }}
+                    >
+                        <ListItemText primary={`${t(`effect_type.${effect.effectType}`)} ${t(`${effect.change}`)} - ${Math.floor(effect.value)} (Count: ${effect.count})`} /> 
+                    </ListItem>
+                    {index < array.length - 1 && <Divider />}
+                </React.Fragment> 
+            ))}
+        </List>
     );
 }
 

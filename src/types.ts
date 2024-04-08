@@ -1,6 +1,6 @@
-export type CorpseType = 'Undead' | 'Humanoid' | 'Demon' | 'Beast' | 'Construct';
+export type CorpseType = 'undead' | 'humanoid' | 'demon' | 'beast' | 'construct';
 
-export type ChangeType = 'increase' | 'decrease' | 'tier';
+export type ChangeType = 'increase' | 'decrease' | 'tier' | 'reforge' | 'reroll' | 'rating';
 
 export type CorpseEffect = {
     effectType: EffectTypeEnum,
@@ -29,10 +29,16 @@ export enum EffectTypeEnum {
     Horizontal = 'Horizontal',
     Vertical = 'Vertical',
     Adjacent = 'Adjacent',
-    AddCraft = 'Add Craft',
-    ModTierRating = 'Mod Tier Rating',
+    AddCraft = 'AddCraft',
+    ModTier = 'ModTier',
     Mirrored = 'Mirrored',
     Quality = 'Quality',
     Split = 'Split',
-    Fracture = 'Fracture'
-  }
+    Fracture = 'Fracture',
+    ItemLevel = 'ItemLevel',
+    Explicit = 'Explicit',
+    SocketNumbers = 'SocketNumbers',
+    SocketLinks = 'SocketLinks',
+    RerollExplicit = 'RerollExplicit',
+    RerollPrefix = 'RerollPrefix',
+}

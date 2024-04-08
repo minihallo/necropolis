@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import './App.css';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { List, ListItemButton, ListItemText } from '@mui/material';
+import { Divider, List, ListItem, ListItemButton, ListItemText, TextField } from '@mui/material';
 import { EffectTypeEnum, ChangeType, CorpseEffect } from './types';
+import { useTranslation } from 'react-i18next';
 
 const EffectTypes: Array<{ name: EffectTypeEnum, change: ChangeType, value: number }> = [
   { name: EffectTypeEnum.Physical, change: 'increase', value: 500 },
@@ -40,15 +41,22 @@ const EffectTypes: Array<{ name: EffectTypeEnum, change: ChangeType, value: numb
   { name: EffectTypeEnum.Gem, change: 'decrease', value: 300 },
   { name: EffectTypeEnum.Minion, change: 'increase', value: 500 },
   { name: EffectTypeEnum.Minion, change: 'decrease', value: 300 },
-  { name: EffectTypeEnum.ModTierRating, change: 'increase', value: 50 },
+  { name: EffectTypeEnum.AddCraft, change: 'increase', value: 20 },
+  { name: EffectTypeEnum.ModTier, change: 'rating', value: 50 },
   { name: EffectTypeEnum.Horizontal, change: 'increase', value: 25 },
   { name: EffectTypeEnum.Vertical, change: 'increase', value: 25 },
   { name: EffectTypeEnum.Adjacent, change: 'increase', value: 40 },
-  { name: EffectTypeEnum.Minion, change: 'increase', value: 20 },
   { name: EffectTypeEnum.Mirrored, change: 'increase', value: 25 },
   { name: EffectTypeEnum.Quality, change: 'increase', value: 5 },
   { name: EffectTypeEnum.Split, change: 'increase', value: 25 },
   { name: EffectTypeEnum.Fracture, change: 'increase', value: 25 },
+  { name: EffectTypeEnum.ItemLevel, change: 'increase', value: 1 },
+  { name: EffectTypeEnum.Explicit, change: 'increase', value: 1 },
+  { name: EffectTypeEnum.Explicit, change: 'decrease', value: 1 },
+  { name: EffectTypeEnum.SocketNumbers, change: 'increase', value: 200 },
+  { name: EffectTypeEnum.SocketLinks, change: 'increase', value: 200 },
+  { name: EffectTypeEnum.RerollExplicit, change: 'increase', value: 6 },
+  { name: EffectTypeEnum.RerollPrefix, change: 'increase', value: 6 },
 ];
 
 type CorpseEffectProps = {
@@ -56,28 +64,37 @@ type CorpseEffectProps = {
 };
 
 function CorpseEffectButton(props: CorpseEffectProps) {
+  const { t } = useTranslation();
+  const [filter, setFilter] = useState('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
   const open = Boolean(anchorEl);
+  
   const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLElement>,
-    index: number,
-  ) => {
-    setSelectedIndex(index);
+  const handleMenuItemClick = (index: number) => {
+    // filteredEffects에서 실제 선택된 항목의 정보를 가져옵니다.
+    const selectedEffectFromFiltered = filteredEffects[index];
+  
+    // 원본 EffectTypes 배열에서 해당 항목의 인덱스를 찾습니다.
+    const selectedIndexInOriginal = EffectTypes.findIndex(effectType =>
+      effectType.name === selectedEffectFromFiltered.name && effectType.change === selectedEffectFromFiltered.change
+    );
+  
+    setSelectedIndex(selectedIndexInOriginal);  // 이제 선택된 인덱스는 원본 배열에서의 인덱스를 반영합니다.
     setAnchorEl(null);
-    
-    const selectedEffect = EffectTypes[index];
+  
+    // 원본 배열에서 선택된 항목의 정보를 사용합니다.
+    const selectedEffect = EffectTypes[selectedIndexInOriginal];
     
     const effect: CorpseEffect = {
       effectType: selectedEffect.name,
       value: selectedEffect.value,
       change: selectedEffect.change,
     };
-
+  
     props.onSelectedCorpseEffect(effect);
   };
 
@@ -85,64 +102,62 @@ function CorpseEffectButton(props: CorpseEffectProps) {
     setAnchorEl(null);
   };
 
+  const filteredEffects = filter
+    ? EffectTypes.filter(effectType =>
+        t(`effect_type.${effectType.name}`).toLowerCase().includes(filter.toLowerCase()) ||
+        t(`${effectType.change}`).toLowerCase().includes(filter.toLowerCase())
+      )
+    : EffectTypes;
+
   return (
-    <div>
+    <React.Fragment>
+      <TextField
+        label="Search Effects"
+        variant="outlined"
+        fullWidth
+        onChange={e => setFilter(e.target.value)}
+        sx={{ m: 1 }}
+      />
       <List
         component="nav"
-        aria-label="Device settings"
-        sx={{ bgcolor: 'background.paper' }}
-      >
-        <ListItemButton
-          id="lock-button"
-          aria-haspopup="listbox"
-          aria-controls="lock-menu"
-          aria-label="Corpse-effect"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClickListItem}
-          sx={{
-            border: 1, // 1px 테두리 추가
-            borderColor: 'lightgray', // 테두리 색상 설정
-            borderRadius: 1, // 모서리를 약간 둥글게
-            textAlign: 'center', // 내용 가운데 정렬
-            flex: 'none', // flex 컨테이너 내에서 자동 크기 조정을 방지
-            m: 1, // margin 추가
-            '&:hover': {
-              backgroundColor: 'action.hover', // 호버 상태의 배경색 변경
-            },
-          }}
-        >
-          <ListItemText
-            primary={selectedIndex != null ? `${EffectTypes[selectedIndex].name} ${EffectTypes[selectedIndex].change} ${EffectTypes[selectedIndex].value}`
-             : "Choose a corpse effect"}
-            // secondary={selectedIndex != null ? `${EffectTypes[selectedIndex].change} ${EffectTypes[selectedIndex].value}` : ''}
-            sx={{
-              textAlign: 'center', // 가운데 정렬
-            }}
-          />
-        </ListItemButton>
-      </List>
-
-      <Menu
-        id="lock-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'lock-button',
-          role: 'listbox',
+        aria-label="Corpse-effect"
+        sx={{
+          bgcolor: 'background.paper',
+          position: 'relative',
+          overflow: 'auto', // 스크롤 가능하도록 설정
+          maxHeight: 260, // 최대 높이 설정
+          border: 1,
+          borderColor: 'divider',
+          borderRadius: 1,
+          m: 1,
         }}
       >
-        {EffectTypes.map((effectType, index) => (
-          <MenuItem
-            key={index}
-            selected={index === selectedIndex}
-            onClick={(event) => handleMenuItemClick(event, index)}
-          >
-            {effectType.name} {effectType.change} {effectType.value}
-          </MenuItem>
-        ))}
-      </Menu>
-    </div>
+          {filteredEffects.map((effectType, index) => (
+            <React.Fragment key={index}>
+              <ListItemButton
+                key={index}
+                selected={selectedIndex === index}
+                onClick={() => handleMenuItemClick(index)}
+                sx={{
+                  textAlign: 'center',
+                  '&.Mui-selected': {
+                    bgcolor: 'action.selected',
+                  },
+                  '&.Mui-selected:hover': {
+                    bgcolor: 'action.hover',
+                  },
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                  },
+                }}
+              >
+                <ListItemText primary={t(`effect.${effectType.name}_${effectType.change}`)} /> 
+              </ListItemButton>
+              {index < EffectTypes.length - 1 && <Divider />} {/* 마지막 요소 제외하고 구분선 추가 */}
+            </React.Fragment>
+          ))}
+      </List>
+    </React.Fragment>
   );
 }
 
