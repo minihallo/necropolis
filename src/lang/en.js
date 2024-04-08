@@ -33,7 +33,7 @@ const en = {
         "Gem":"Gem",
         "Minion":"Minion",
         "AddCraft":"AddCraft",
-        "ModTierRating":"Mod Tier Rating",
+        "ModTier":"Mod Tier",
         "Horizontal":"Horizontal",
         "Vertical":"Vertical",
         "Adjacent":"Adjacent",
