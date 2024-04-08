@@ -199,6 +199,14 @@
   background-color: rgb(192, 147, 229);
 }
 
+.tile.Gem_increase {
+  background-color: rgb(247, 221, 108);
+}
+
+.tile.Gem_decrease {
+  background-color: rgb(226, 238, 161);
+}
+
 .tile.Minion_increase {
   background-color: rgb(81, 209, 166);
 }
